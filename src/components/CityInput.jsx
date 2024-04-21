@@ -3,7 +3,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 
 export default function CityInput({updateWeatherData}) {
-    const API_key = "dc53c06ff82d739c3e0b27d25096461a";
+    //generate and use your Api key from openWeatherMap -> Profile -> My Api Keys
+    const API_key = "";
     const [cityName, setcityName] = useState("Delhi");
     const [timerId, setTimerId] = useState();
     const getWeatherData = async (city_name) => {
