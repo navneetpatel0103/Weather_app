@@ -1,3 +1,7 @@
 //generate and use your Api key from openWeatherMap -> Profile -> My Api Keys
 
 // and insert into CityInput.jsx, navigation is: src -> components -> CityInput.jsx -> line 7
+
+// use node with version greater than 18
+
+// use "npm run dev" to start the project
