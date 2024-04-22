@@ -8,8 +8,11 @@ function App() {
   const [weatherData, setweatherData] = useState({});
   
   const updateWeatherData=(data)=>{
-    setweatherData(data);
-    console.log("app", data);
+    if(data.cod==="404"){
+      setweatherData({});
+    }else{
+      setweatherData(data);
+    }
   }
 
   return (
@@ -17,8 +20,11 @@ function App() {
     <div className=" bg-center bg-no-repeat bg-cover bg-scroll h-screen p-7 sm:flex items-center justify-center" style={{ backgroundImage: "url(" + sun + ")" }}>
       <div className=" bg-white bg-opacity-75 rounded-2xl p-3 sm:w-1/2">
       <CityInput updateWeatherData={updateWeatherData}/>
+      {Object.keys(weatherData).length === 0 ? <div className='font-bold text-2xl text-center'>No City Found</div>:
+      <>
       <MainContainer weatherData={weatherData}/>
       <AddInfo weatherData={weatherData}/>
+      </>}
       </div>
       </div>  
     </>
