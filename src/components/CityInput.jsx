@@ -1,49 +1,69 @@
 import React from 'react'
-import SearchIcon from '@mui/icons-material/Search';
+import Select from 'react-select';
 import { useState, useEffect } from 'react';
 
-export default function CityInput({updateWeatherData}) {
+export default function CityInput({ updateWeatherData }) {
     //generate and use your Api key from openWeatherMap -> Profile -> My Api Keys
     const API_key = "";
     const [cityName, setcityName] = useState("Delhi");
     const [timerId, setTimerId] = useState();
+    const [dropdownCities, setdropdownCities] = useState([]);
     const getWeatherData = async (city_name) => {
         try {
-            console.log("city", city_name);
             console.log(API_key);
             const weatheUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city_name}&appid=${API_key}`;
             const response = await fetch(weatheUrl);
             const data = await response.json();
-            console.log(data);
             updateWeatherData(data);
-        }catch (error) {
-        console.error("Error fetching weather data:", error);
+        } catch (error) {
+            console.error("Error fetching weather data:", error);
+        }
     }
-}
 
-useEffect(() => {
-    let name=cityName;
-    setcityName("");
-    getWeatherData(name);
-}, []);
+    useEffect(() => {
+        const fetchCities = async () => {
+            try {
+                const cityUrl = `https://countriesnow.space/api/v0.1/countries/population/cities`;
+                const response = await fetch(cityUrl);
+                const cityData = await response.json();
+                const cityOptions = cityData.data.map((curr) => ({
+                    value: curr.city,
+                    label: curr.city+", " + curr.country
+                }))
+                setdropdownCities(cityOptions);
+            } catch (error) {
+                console.error("Error fetching city data:", error);
+            }
+        }
+        fetchCities();
+        let name = cityName;
+        setcityName("");
+        getWeatherData(name);
+    }, []);
 
-const getCityName=(e)=>{
-    clearTimeout(timerId);
-    setcityName(e.target.value);
-    const timeOutId=setTimeout(()=>getWeatherData(e.target.value),500);
-    setTimerId(timeOutId);
-  }
+    const getCityName = (selectedOption) => {
+        clearTimeout(timerId);
+        setcityName(selectedOption);
+        const timeOutId = setTimeout(() => getWeatherData(selectedOption.value), 500);
+        setTimerId(timeOutId);
+    }
 
     return (
         <div>
-            <div className="my-4 flex items-center justify-center">
-                <div className="relative w-full max-w-xs" >
-                    <input className='bg-black text-white pl-12 pr-3 h-7 w-full rounded-md py-4' placeholder='Search your city...' type="text" onChange={getCityName} value={cityName}/>
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center justify-center ">
-                        <SearchIcon className="h-5 w-5 text-gray-400" />
-                    </div>
+            {dropdownCities.length > 0 ? (
+                <div className='pt-3 px-5'>
+                <Select
+                    value={cityName}
+                    onChange={getCityName}
+                    options={dropdownCities}
+                    isClearable
+                    isSearchable
+                    placeholder="Search your city..."
+                />
                 </div>
-            </div>
+            ) : (
+                <p>Loading...</p>
+            )}
         </div>
     )
 }
